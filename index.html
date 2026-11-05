@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg transform='rotate(-7 32 32)'%3E%3Crect x='11' y='3.5' width='42' height='57' rx='6' fill='%23f3eee2' stroke='%230c1626' stroke-width='2.5'/%3E%3Cpath transform='translate(32 33) scale(1.05)' fill='%232a63d4' d='M0-10C6-4 10-1 10 3C10 7 6 8.5 2.5 6.5C3 9 4 10.5 5.5 11.5H-5.5C-4 10.5-3 9-2.5 6.5C-6 8.5-10 7-10 3C-10-1-6-4 0-10Z'/%3E%3C/g%3E%3C/svg%3E">
+<title>Countdown</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Countdown trains basic strategy and card counting in real rounds against the dealer. Download for Windows.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Playfair+Display:wght@700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: one column page in the app's own night-table palette; the hero pairs the download with a live Hi-Lo hand. */
+:root {
+  color-scheme: dark;
+  --bg: #0b1517; --surface: #111e21; --surface-2: #172629; --line: #22363a;
+  --fg: #e7eeea; --muted: #93a8a3; --accent: #4a8cff; --accent-ink: #06122a;
+  --table: #1f2d40; --table-hi: #30465f; --card: #f6f2e8; --ink: #101a24; --red: #c62f2f;
+  --plus: #5fcf95; --minus: #f08a7e;
+  --f-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-rank: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box }
+html { scroll-behavior: smooth }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 17px; line-height: 1.6; font-variant-numeric: lining-nums; }
+img { display: block; max-width: 100% }
+a { color: inherit }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px }
+.wrap { width: min(1120px, 100%); margin-inline: auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)) }
+
+.top { padding-block: 20px; }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-family: var(--f-display); font-weight: 700; font-size: 20px }
+.brand svg { width: 38px; height: 38px; flex: none; overflow: visible }
+.top nav { display: flex; gap: 20px; font-size: 15px; color: var(--muted) }
+.top nav a { text-decoration: none }
+.top nav a:hover { color: var(--fg) }
+
+.hero { padding-block: 36px 72px }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: center }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(40px, 5.6vw, 66px); line-height: 1.05; margin: 0; text-wrap: balance }
+.lead { margin: 20px 0 0; font-size: 20px; color: var(--muted); max-width: 34em }
+.get { margin-top: 30px; display: grid; gap: 12px; justify-items: start }
+.btn { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 700; border-radius: 10px; padding: 15px 24px; background: var(--accent); color: var(--accent-ink); font-size: 18px; transition: filter .15s }
+.btn:hover { filter: brightness(1.1) }
+.btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none }
+.btn[aria-disabled="true"] { background: var(--surface-2); color: var(--muted); cursor: not-allowed; filter: none }
+.meta { margin: 0; font-size: 15px; color: var(--muted) }
+.alts { margin: 4px 0 0; font-size: 15px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 18px }
+.alts a { color: var(--fg); text-underline-offset: 3px }
+.alts a[aria-disabled="true"] { color: var(--muted); text-decoration: none; cursor: not-allowed }
+.pending { margin: 0; font-size: 14px; color: var(--muted); border-left: 2px solid var(--line); padding-left: 10px }
+.os-note { margin: 0; font-size: 15px; color: var(--fg) }
+
+/* Hi-Lo table */
+.table { border-radius: 22px; padding: 26px; background: radial-gradient(120% 90% at 50% 40%, var(--table-hi), var(--table) 60%, #151f2e); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07), 0 24px 50px rgba(0,0,0,.35); min-width: 0 }
+.table-h { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px }
+.label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(231,238,234,.65) }
+.rc { font-size: 58px; font-weight: 700; line-height: 1; color: #fff; font-variant-numeric: lining-nums tabular-nums; margin-top: 6px }
+.dealt { display: flex; gap: 8px; margin: 26px 0 22px; min-height: 124px; flex-wrap: nowrap; justify-content: flex-start; overflow: hidden }
+.c { flex: 0 1 76px; min-width: 0; display: grid; gap: 8px; justify-items: stretch }
+.pc { aspect-ratio: 5 / 7; border-radius: 8px; background: var(--card); color: var(--ink); position: relative; font-family: var(--f-rank); font-weight: 700; box-shadow: 0 6px 14px rgba(0,0,0,.35) }
+.pc.red { color: var(--red) }
+.pc .r { position: absolute; top: 6%; left: 9%; font-size: clamp(16px, 2.3vw, 24px); line-height: 1 }
+.pc .s { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(24px, 3.4vw, 36px); line-height: 1; font-family: Georgia, serif }
+.v { text-align: center; font-size: 15px; font-weight: 700; font-variant-numeric: lining-nums tabular-nums }
+.v.p { color: var(--plus) } .v.m { color: var(--minus) } .v.z { color: rgba(231,238,234,.6) }
+.c.new .pc { animation: fly .32s cubic-bezier(.2,.7,.25,1) }
+@keyframes fly { from { transform: translate(70px, -70px) rotate(-22deg) scale(.7) } to { transform: none } }
+@media (prefers-reduced-motion: reduce) { .c.new .pc { animation: none } }
+.table-f { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap }
+.table-f p { margin: 0; font-size: 14px; color: rgba(231,238,234,.72); max-width: 26em }
+.deal { font: inherit; font-weight: 700; font-size: 15px; color: #fff; background: rgba(8,12,20,.55); border: 1px solid rgba(255,255,255,.18); border-radius: 8px; padding: 9px 16px; cursor: pointer }
+.deal:hover { background: rgba(8,12,20,.8) }
+
+section.band { padding-block: 64px; border-top: 1px solid var(--line) }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 3.4vw, 38px); line-height: 1.15; margin: 0 0 32px; text-wrap: balance }
+.shots { display: grid; gap: 56px }
+.shot { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 36px; align-items: center }
+.shot:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) }
+.shot:nth-child(even) figure { order: 2 }
+.shot figure { margin: 0; min-width: 0 }
+.shot img { width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 18px 40px rgba(0,0,0,.35) }
+.shot h3 { font-family: var(--f-display); font-size: 24px; margin: 0 0 10px; line-height: 1.2 }
+.shot p { margin: 0; color: var(--muted) }
+.shot div { min-width: 0 }
+.also { margin: 48px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px }
+.also b { display: block; font-family: var(--f-display); font-size: 19px; margin-bottom: 4px }
+.also span { color: var(--muted); font-size: 16px }
+
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; counter-reset: s }
+.steps li { counter-increment: s; min-width: 0 }
+.steps li::before { content: counter(s); display: block; font-family: var(--f-display); font-weight: 800; font-size: 40px; line-height: 1; color: var(--accent); margin-bottom: 12px }
+.steps b { display: block; margin-bottom: 4px; font-size: 18px }
+.steps span { color: var(--muted); font-size: 16px }
+kbd { font-family: inherit; font-weight: 600; color: var(--fg); background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; font-size: .92em; white-space: nowrap }
+
+.qa { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 48px; margin: 0 }
+.qa dt { font-weight: 700; font-size: 18px; margin-bottom: 4px }
+.qa dd { margin: 0; color: var(--muted); font-size: 16px }
+
+.last { padding-block: 56px; border-top: 1px solid var(--line) }
+.last .wrap { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap }
+.last h2 { margin: 0 }
+footer { padding-block: 26px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px }
+footer p { margin: 0; max-width: 62ch }
+
+@media (max-width: 900px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 40px }
+  .shot, .shot:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 18px }
+  .shot:nth-child(even) figure { order: 0 }
+  .steps, .also { grid-template-columns: minmax(0, 1fr); gap: 24px }
+  .qa { grid-template-columns: minmax(0, 1fr); gap: 22px }
+  section.band { padding-block: 48px }
+}
+@media (max-width: 480px) {
+  .top nav { display: none }
+  .table { padding: 20px 16px }
+  .dealt { gap: 5px; min-height: 96px }
+  .btn { width: 100%; justify-content: center }
+  .get { justify-items: stretch }
+  .rc { font-size: 48px }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <path id="spade" d="M0-10C6-4 10-1 10 3C10 7 6 8.5 2.5 6.5C3 9 4 10.5 5.5 11.5H-5.5C-4 10.5-3 9-2.5 6.5C-6 8.5-10 7-10 3C-10-1-6-4 0-10Z"/>
+  <symbol id="logo" viewBox="0 0 64 64"><g transform="rotate(-7 32 32)">
+    <rect x="11" y="3.5" width="42" height="57" rx="6" fill="#f3eee2" stroke="#0c1626" stroke-width="2.5"/>
+    <text x="20.5" y="17.5" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-weight="700" font-size="12.5" fill="#0c1626">C</text>
+    <use href="#spade" transform="translate(20.5 23.5) scale(.3)" fill="#0c1626"/>
+    <use href="#spade" transform="translate(32 33) scale(.9)" fill="#2a63d4"/>
+    <g transform="rotate(180 32 32)">
+      <text x="20.5" y="17.5" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-weight="700" font-size="12.5" fill="#0c1626">C</text>
+      <use href="#spade" transform="translate(20.5 23.5) scale(.3)" fill="#0c1626"/>
+    </g>
+  </g></symbol>
+  <symbol id="dl" viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></symbol>
+</defs></svg>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top"><svg aria-hidden="true"><use href="#logo"/></svg>Countdown</a>
+  <nav aria-label="Page"><a href="#features">Features</a><a href="#install">Install</a><a href="#faq">FAQ</a></nav>
+</div></header>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div>
+      <h1>Learn to count cards before you sit down at a table.</h1>
+      <p class="lead">Countdown trains basic strategy and Hi-Lo in real rounds against the dealer. It runs as its own program and works without internet.</p>
+      <div class="get">
+        <p class="os-note" id="os-note" hidden>You're not on Windows: the browser version is your best option.</p>
+        <a class="btn" data-dl="setup" href="#"><svg aria-hidden="true"><use href="#dl"/></svg>Download for Windows</a>
+        <p class="meta">Version 1.0.0 · Windows 10 and 11 (64-bit) · 122 MB</p>
+        <p class="alts"><a data-dl="portable" href="#">No install needed (111 MB)</a><a data-dl="play" href="#">Mac, Linux, tablet: play in your browser</a></p>
+        <p class="pending" id="pending" hidden>Preview: the download links go live once the files are online.</p>
+      </div>
+    </div>
+    <div class="table" aria-label="Example: counting with Hi-Lo">
+      <div class="table-h">
+        <div><div class="label">Running Count</div><div class="rc" id="rc" aria-live="polite">+2</div></div>
+        <button type="button" class="deal" id="deal">Next card</button>
+      </div>
+      <div class="dealt" id="dealt"></div>
+      <div class="table-f"><p>Hi-Lo: 2 to 6 count +1, 7 to 9 count 0, 10 to ace count −1.</p></div>
+    </div>
+  </div></section>
+
+  <section class="band" id="features"><div class="wrap">
+    <h2>From your first chart to a full table</h2>
+    <div class="shots">
+      <article class="shot">
+        <figure><img src="img/counting.jpg" width="1280" height="800" alt="Counting practice: dealer and player cards, the running count field below, streak and accuracy on the left" loading="lazy"></figure>
+        <div><h3>Counting against the dealer</h3><p>Every round is played out, with cards dealt from the shoe. You choose whether you're asked for the count every 3, 5, 8, 10 or 15 hands. A right answer gets a bell, a wrong one sounds like your chips leaving.</p></div>
+      </article>
+      <article class="shot">
+        <figure><img src="img/strategy.jpg" width="1280" height="800" alt="Basic strategy practice: hard 15 against a dealer 6 with Hit, Stand, Double and Split buttons" loading="lazy"></figure>
+        <div><h3>Basic strategy</h3><p>One hand, one dealer card, one decision. Practice everything or just hard totals, soft totals, pairs or deviations. When you get one wrong, Countdown shows you the right play.</p></div>
+      </article>
+      <article class="shot">
+        <figure><img src="img/ev.jpg" width="1280" height="800" alt="EV Simulator showing expected value per hour, standard deviation, risk of ruin and a bet table by true count" loading="lazy"></figure>
+        <div><h3>EV Simulator</h3><p>Enter the table rules and your bet spread, then simulate 2 million rounds. You get EV per hour, standard deviation, risk of ruin and N0. The numbers are an approximation, not a promise of winnings.</p></div>
+      </article>
+    </div>
+    <ul class="also">
+      <li><b>Game Table</b><span>Other players, bets by the count, insurance and count checks like at a real table.</span></li>
+      <li><b>True Count</b><span>Estimate the decks in the discard tray and convert the running count.</span></li>
+      <li><b>Strategy Charts</b><span>Standard H17, Canadian and European no hole card, plus the Illustrious 18.</span></li>
+    </ul>
+  </div></section>
+
+  <section class="band" id="install"><div class="wrap">
+    <h2>Installed in three steps</h2>
+    <ol class="steps">
+      <li><b>Download</b><span>Download <kbd>Countdown-Setup-1.0.0.exe</kbd> and open the file.</span></li>
+      <li><b>Confirm the warning</b><span>The program isn't digitally signed, so Windows shows a warning. Click <kbd>More info</kbd>, then <kbd>Run anyway</kbd>.</span></li>
+      <li><b>Start playing</b><span>Follow the installer, then open Countdown from your desktop or Start menu.</span></li>
+    </ol>
+  </div></section>
+
+  <section class="band" id="faq"><div class="wrap">
+    <h2>FAQ</h2>
+    <dl class="qa">
+      <div><dt>Do I need internet?</dt><dd>Only for the download. The Windows program runs completely offline.</dd></div>
+      <div><dt>Where is my progress saved?</dt><dd>On your own device. The Windows program sends nothing over the internet.</dd></div>
+      <div><dt>Is there a Mac app?</dt><dd>Not yet. On a Mac, Countdown runs in your browser with the same exercises, and your progress is saved in that browser.</dd></div>
+      <div><dt>Is real money involved?</dt><dd>No. The bankroll at the Game Table is play money.</dd></div>
+    </dl>
+  </div></section>
+
+  <section class="last"><div class="wrap">
+    <h2>Ready for your first shoe?</h2>
+    <a class="btn" data-dl="setup" href="#"><svg aria-hidden="true"><use href="#dl"/></svg>Download for Windows</a>
+  </div></section>
+</main>
+
+<footer><div class="wrap"><p>Countdown is a training program and doesn't guarantee winnings. Casinos can ban players who count cards. Check the local rules before you play, and only bet money you can afford to lose.</p></div></footer>
+
+<script>
+// Download targets. Empty = file not online yet, the button stays inactive.
+const LINKS = {
+  setup: 'https://github.com/Brengsto/countdown/releases/download/v1.0.0/Countdown-Setup-1.0.0.exe',
+  portable: 'https://github.com/Brengsto/countdown/releases/download/v1.0.0/Countdown-Portable-1.0.0.exe',
+  play: 'https://brengsto.github.io/countdown/play.html'
+};
+
+let missing = false;
+for (const a of document.querySelectorAll('[data-dl]')) {
+  const url = LINKS[a.dataset.dl];
+  if (url) a.href = url;
+  else {
+    missing = true;
+    a.setAttribute('aria-disabled', 'true');
+    a.removeAttribute('href');
+  }
+}
+document.getElementById('pending').hidden = !missing;
+document.getElementById('os-note').hidden = /Windows/.test(navigator.userAgent);
+
+// Live Hi-Lo example: starts on a fixed hand, then deals from a shuffled deck
+const SUITS = ['♠', '♥', '♦', '♣'], RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+const hilo = r => '23456'.includes(r) && r.length === 1 ? 1 : ['7', '8', '9'].includes(r) ? 0 : -1;
+const fmt = n => n > 0 ? '+' + n : n < 0 ? '−' + Math.abs(n) : '0';
+const START = [['5', '♥'], ['K', '♠'], ['3', '♣'], ['9', '♦'], ['6', '♠']];
+const MAX_SHOWN = 5;
+let deck = [], shown = [], rc = 0;
+function newDeck() {
+  deck = [];
+  for (const s of SUITS) for (const r of RANKS) deck.push([r, s]);
+  for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+}
+function render(animate) {
+  document.getElementById('rc').textContent = fmt(rc);
+  document.getElementById('dealt').innerHTML = shown.map(([r, s], i) => {
+    const v = hilo(r), red = s === '♥' || s === '♦';
+    return `<div class="c${animate && i === shown.length - 1 ? ' new' : ''}"><div class="pc${red ? ' red' : ''}" role="img" aria-label="${r} ${s}"><span class="r">${r}</span><span class="s">${s}</span></div><div class="v ${v > 0 ? 'p' : v < 0 ? 'm' : 'z'}">${fmt(v)}</div></div>`;
+  }).join('');
+}
+function deal() {
+  if (!deck.length) { newDeck(); rc = 0; shown = []; }
+  const c = deck.pop();
+  rc += hilo(c[0]); shown.push(c);
+  if (shown.length > MAX_SHOWN) shown.shift();
+  render(true);
+}
+newDeck();
+const used = new Set(START.map(c => c.join('')));
+deck = deck.filter(c => !used.has(c.join('')));
+shown = START.slice(); rc = START.reduce((a, c) => a + hilo(c[0]), 0);
+render(false);
+document.getElementById('deal').addEventListener('click', deal);
+</script>
